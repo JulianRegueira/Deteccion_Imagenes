@@ -28,18 +28,11 @@ def match_image(img, template):
     res = cv2.matchTemplate(img, template, matching_method, mask=None)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     return max_val, max_loc
-
-def showImage(img, max_loc):
-
-    def getCoords(template, max_loc):
-        w, h = template.shape[::-1]
-        bottom_right = (max_loc[0] + w, max_loc[1] + h)
-        return bottom_right
     
 def click(x, y):
     current_x, current_y = pyautogui.position()
     pyautogui.click(x, y)
-    pyautogui.moveTo(current_x, current_y) # We go back to where we were
+    pyautogui.moveTo(current_x, current_y)
 
 def searchTemplate(template, accuracy=0.87):
     time.sleep(0.1)
@@ -56,16 +49,58 @@ def searchTemplate(template, accuracy=0.87):
         return False, max_val
     
 def main():
-    Bless = cv2.imread('./templates/Arco.jpg', 0)
-    Soul = cv2.imread('./templates/Arcoprueba.jpg', 0)
+    Bless = cv2.imread('./templates/Bless.jpg', 0)
+    Soul = cv2.imread('./templates/Soul.jpg', 0)
+    Chaos = cv2.imread('./templates/Chaos.jpg', 0)
+    Life = cv2.imread('./templates/Life.jpg', 0)
+    Item1 = cv2.imread('./templates/Item1.jpg', 0)
+    Item2 = cv2.imread('./templates/Item2.jpg', 0)
+    Item3 = cv2.imread('./templates/Item3.jpg', 0)
+    Item4 = cv2.imread('./templates/Item4.jpg', 0)
+    Item5 = cv2.imread('./templates/Item5.jpg', 0)
 
     while(True):
         try:
             # Bless
-            found, max_val = searchTemplate(Bless, accuracy=0.5)
+            found, max_val = searchTemplate(Bless, accuracy=0.9)
             print(found, max_val)
-            #if found:
-                #windowsbeep(300,2000)
+            if found:
+                windowsbeep(100,500)
+            # Soul
+            found, max_val = searchTemplate(Soul, accuracy=0.9)
+            print(found, max_val)
+            if found:
+                windowsbeep(100,500)
+            # Chaos
+            found, max_val = searchTemplate(Chaos, accuracy=0.9)
+            print(found, max_val)
+            if found:
+                windowsbeep(100,500)
+            found, max_val = searchTemplate(Life, accuracy=0.9)
+            print(found, max_val)
+            if found:
+                windowsbeep(100,500)
+            found, max_val = searchTemplate(Item1)
+            print(found, max_val)
+            if found:
+                windowsbeep(100,500)
+            found, max_val = searchTemplate(Item2)
+            print(found, max_val)
+            if found:
+                windowsbeep(100,500)
+            found, max_val = searchTemplate(Item3)
+            print(found, max_val)
+            if found:
+                windowsbeep(100,500)
+            found, max_val = searchTemplate(Item4)
+            print(found, max_val)
+            if found:
+                windowsbeep(100,500)
+            found, max_val = searchTemplate(Item5)
+            print(found, max_val)
+            if found:
+                windowsbeep(100,500)
+                
         except Exception as e:
             print(e) 
-        time.sleep(5)
+        time.sleep(2)

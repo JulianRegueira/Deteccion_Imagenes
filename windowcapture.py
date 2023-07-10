@@ -6,50 +6,60 @@ from PIL import Image
 
 
 def SearchImage():
-    hwnd_target = win32gui.FindWindow(None, 'MU')
-    print(hwnd_target)
+    hwnd_targets = []
 
-    left, top, right, bot = win32gui.GetWindowRect(hwnd_target)
-    w = right - left
-    h = bot - top
+    def enum_window_callback(hwnd, hwnd_targets):
+        window_title = win32gui.GetWindowText(hwnd)
+        if window_title == 'MU':
+            hwnd_targets.append(hwnd)
 
-    if (w != 1600 and h != 900): # We want to keep the window size always the same so it matches our templates
-        win32gui.MoveWindow(hwnd_target, left, top, 1600, 900, True)
-        print("Resizing window: Height", h , " Width", w)
-    
-    # Trick so setForeground always works
-    shell = win32com.client.Dispatch("WScript.Shell")
-    shell.SendKeys('%')
-    win32gui.SetForegroundWindow(hwnd_target)
+    # Enumerar todas las ventanas y filtrar las que tengan el título "MU"
+    win32gui.EnumWindows(enum_window_callback, hwnd_targets)
 
-    hdesktop = win32gui.GetDesktopWindow()
-    hwndDC = win32gui.GetWindowDC(hdesktop)
-    mfcDC  = win32ui.CreateDCFromHandle(hwndDC)
-    saveDC = mfcDC.CreateCompatibleDC()
+    for hwnd_target in hwnd_targets:
+        print(hwnd_targets)
 
-    saveBitMap = win32ui.CreateBitmap()
-    saveBitMap.CreateCompatibleBitmap(mfcDC, w, h)
+        left, top, right, bot = win32gui.GetWindowRect(hwnd_target)
+        w = right - left
+        h = bot - top
 
-    saveDC.SelectObject(saveBitMap)
+        if (w != 1600 and h != 900): # Queremos mantener el tamaño de la ventana siempre igual para que coincida con nuestras plantillas
+            win32gui.MoveWindow(hwnd_target, left, top, 1600, 900, True)
+            #print("Redimensionando ventana: Altura", h, " Ancho", w)
 
-    result = saveDC.BitBlt((0, 0), (w, h), mfcDC, (left, top), win32con.SRCCOPY)
+        # Truco para que setForeground siempre funcione
+        shell = win32com.client.Dispatch("WScript.Shell")
+        shell.SendKeys('%')
+        win32gui.SetForegroundWindow(hwnd_target)
 
-    bmpinfo = saveBitMap.GetInfo()
-    bmpstr = saveBitMap.GetBitmapBits(True)
+        hdesktop = win32gui.GetDesktopWindow()
+        hwndDC = win32gui.GetWindowDC(hdesktop)
+        mfcDC  = win32ui.CreateDCFromHandle(hwndDC)
+        saveDC = mfcDC.CreateCompatibleDC()
 
-    im = Image.frombuffer(
-        'RGB',
-        (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
-        bmpstr, 'raw', 'BGRX', 0, 1)
+        saveBitMap = win32ui.CreateBitmap()
+        saveBitMap.CreateCompatibleBitmap(mfcDC, w, h)
 
-    win32gui.DeleteObject(saveBitMap.GetHandle())
-    saveDC.DeleteDC()
-    mfcDC.DeleteDC()
-    win32gui.ReleaseDC(hdesktop, hwndDC)
+        saveDC.SelectObject(saveBitMap)
 
-    if result == None:
-        # PrintWindow Succeeded
-        return im, (left, top, right, bot)
-        # im.save("screenshot.png")
-    
-    return None
+        result = saveDC.BitBlt((0, 0), (w, h), mfcDC, (left, top), win32con.SRCCOPY)
+
+        bmpinfo = saveBitMap.GetInfo()
+        bmpstr = saveBitMap.GetBitmapBits(True)
+
+        im = Image.frombuffer(
+            'RGB',
+            (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
+            bmpstr, 'raw', 'BGRX', 0, 1)
+
+        win32gui.DeleteObject(saveBitMap.GetHandle())
+        saveDC.DeleteDC()
+        mfcDC.DeleteDC()
+        win32gui.ReleaseDC(hdesktop, hwndDC)
+
+        if result == None:
+            # PrintWindow Succeeded
+            return im, (left, top, right, bot)
+            # im.save("screenshot.png")
+        
+        return None

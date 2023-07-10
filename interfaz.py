@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import *
 from PIL import Image,ImageTk
 from tkinter import messagebox, filedialog
-import os
 import main
 
 
@@ -34,6 +33,9 @@ def abrirImagen():
 def run():
     main.main()
 
+def exit_program():
+    root.destroy()
+
 #--------------------------------------------------------------------------------------------------------------------------------
 #CONFIGURACION GENERAL
 
@@ -50,7 +52,7 @@ root.iconbitmap("esq.ico")
 root.config(bg="grey")
 
 #TAMAÑO
-root.geometry("350x250")
+root.geometry("250x150")
 root.resizable(0,0)
 
 
@@ -78,8 +80,11 @@ barraMenu.add_cascade(label="Ayuda", menu=Ayuda)
 #--------------------------------------------------------------------------------------------------------------------------------
 #BOTON START
 
-boton = tk.Button(root, text= "Start", width="20", height="2", command=run)
-boton.place(x=100, y=180)
+boton_start = tk.Button(root, text= "Start", width="20", height="2", command=run)
+boton_start.place(x=50, y=25)
+
+boton_salir = tk.Button(root, text="Exit", width="10", height="2", command=exit_program)
+boton_salir.place(x=85, y=75)
 
 #FUNCIONALIDAD DEL BOTON PARA COMENZAR
 
